@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GenSanFragheads
 
-## Getting Started
+One-page static website for the [r/GenSanFragheads](https://www.reddit.com/r/GenSanFragheads) fragrance community in General Santos City. Built with Next.js (App Router, static export), TypeScript and Tailwind CSS.
 
-First, run the development server:
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # http://localhost:3000
+npm run build   # static site in out/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`out/` can be deployed to any static host (GitHub Pages, Cloudflare Pages, Netlify).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Editing content
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The site is a single scrolling page: a hero, the Scent Map and Heat-Proof Picks. Their content lives in `src/data/`, so updating it rarely means touching page code:
 
-## Learn More
+| File | Section |
+| --- | --- |
+| `src/data/scent-map.json` | Scent Map spots, group names and descriptions, map center |
+| `src/data/heat-proof.json` | Heat-Proof Picks and the peso budget tiers |
 
-To learn more about Next.js, take a look at the following resources:
+Field types and notes for both files are in `src/lib/data.ts`, which also checks the references when the site builds: an unknown `kind` or `tier` fails the build with a message naming the entry. In short:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- A spot needs `name`, `kind` (`counter`, `decant` or `local-maker`) and `location`. Add `coords` as `[latitude, longitude]` to pin it on the map (right-click a place on openstreetmap.org and choose Show address to get them); leave it out for online-only sellers. `notes` and `link` are optional.
+- A pick needs `name`, `brand`, `tier` (one of the tier `id`s) and `why`. `link` is optional.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Site name, subreddit link and the section list used by the menu are in `src/lib/site.ts`.
