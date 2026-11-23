@@ -4,8 +4,6 @@ import { AnnouncementBar } from "@/components/announcement-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { site } from "@/lib/site";
-// Leaflet's stylesheet must load before ours so the overrides in globals.css win the cascade.
-import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 const jost = Jost({

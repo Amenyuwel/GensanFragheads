@@ -3,6 +3,7 @@
 import L from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { scentMap, type Spot } from "@/lib/data";
+import "./leaflet-layer.css";
 
 // Leaflet's default marker images break under bundlers, so the pin is inline SVG.
 // Bright blue so it stands out from the grey tiles and the map's own dark POI icons.

@@ -1,0 +1,2 @@
+/* Layered so the unlayered overrides in globals.css win no matter which order the CSS chunks load in. */
+@import "leaflet/dist/leaflet.css" layer(leaflet);
