@@ -3,6 +3,7 @@
 import L from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { scentMap, type Spot } from "@/lib/data";
+import { directionsUrl } from "@/lib/directions";
 import "./leaflet-layer.css";
 
 // Leaflet's default marker images break under bundlers, so the pin is inline SVG.
@@ -17,6 +18,10 @@ const pin = L.divIcon({
   iconAnchor: [16, 41],
   popupAnchor: [0, -38],
 });
+
+// Zoom control is 10px margin + 34px wide at top left; 52px leaves a small gap past its right edge.
+const POPUP_PAN_PADDING_LEFT = 52;
+const POPUP_PAN_PADDING_EDGE = 8;
 
 type PinnedSpot = Spot & { coords: [number, number] };
 
@@ -40,12 +45,27 @@ export default function ScentMapView({ spots }: { spots: Spot[] }) {
       {pinned.map((spot) => (
         <Marker key={spot.name} position={spot.coords} icon={pin} title={spot.name}>
           {/* Without a minimum width Leaflet sizes the popup to its longest word and wraps every line. */}
-          <Popup minWidth={240} maxWidth={300}>
+          {/* Left padding pans the popup clear of the zoom control; top/bottom keep the whole popup in view. */}
+          <Popup
+            minWidth={240}
+            maxWidth={300}
+            autoPanPaddingTopLeft={[POPUP_PAN_PADDING_LEFT, POPUP_PAN_PADDING_EDGE]}
+            autoPanPaddingBottomRight={[POPUP_PAN_PADDING_EDGE, POPUP_PAN_PADDING_EDGE]}
+          >
             {/* Right padding keeps the first line clear of the close button. */}
             <p className="pr-6 text-sm tracking-[0.12em] text-muted uppercase">{scentMap.kinds[spot.kind].label}</p>
             <p className="mt-1 text-lg tracking-[0.06em] uppercase">{spot.name}</p>
             <p className="mt-1 text-base text-muted">{spot.location}</p>
             {spot.notes && <p className="mt-1 text-base text-muted">{spot.notes}</p>}
+            <a
+              href={directionsUrl(spot.coords)}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Get directions to ${spot.name}`}
+              className="mt-2 inline-block text-base underline"
+            >
+              Get directions
+            </a>
           </Popup>
         </Marker>
       ))}

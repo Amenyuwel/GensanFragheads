@@ -109,6 +109,11 @@ a {
   margin: 0;
 }
 
+/* Leaflet colors every link in the map blue; popup links follow the site link style instead. */
+.leaflet-popup-content a {
+  color: var(--foreground);
+}
+
 .scent-pin svg {
   display: block;
   filter: drop-shadow(0 3px 4px rgb(0 0 0 / 0.35));

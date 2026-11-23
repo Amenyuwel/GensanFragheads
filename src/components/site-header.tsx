@@ -31,12 +31,12 @@ export function SiteHeader() {
       <nav aria-label="Main">
         <ul className="page-width flex flex-wrap justify-center gap-x-8 pb-2 text-sm tracking-[0.14em] uppercase">
           {nav.map((item) => {
-            const current = item.sectionId ? active === item.sectionId : pathname === item.href;
+            const current = active === item.sectionId;
             return (
               <li key={item.href}>
                 <a
                   href={item.href}
-                  aria-current={current ? (item.sectionId ? "location" : "page") : undefined}
+                  aria-current={current ? "location" : undefined}
                   className={`inline-block py-2.5 transition-colors ${
                     current ? "underline decoration-1 underline-offset-[0.5em]" : "text-muted hover:text-foreground"
                   }`}

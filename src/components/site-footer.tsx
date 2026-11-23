@@ -1,11 +1,6 @@
-"use client";
-
-import { usePathname } from "next/navigation";
 import { nav, site } from "@/lib/site";
 
 export function SiteFooter() {
-  const pathname = usePathname();
-
   return (
     <footer className="mt-24 bg-green text-white">
       <div className="page-width grid gap-10 py-14 sm:grid-cols-3">
@@ -20,11 +15,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2 text-lg text-white/70">
             {nav.map((item) => (
               <li key={item.href}>
-                <a
-                  href={item.href}
-                  aria-current={!item.sectionId && pathname === item.href ? "page" : undefined}
-                  className="hover:text-white"
-                >
+                <a href={item.href} className="hover:text-white">
                   {item.label}
                 </a>
               </li>
