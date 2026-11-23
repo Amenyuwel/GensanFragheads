@@ -1,0 +1,37 @@
+{
+  "center": [6.1164, 125.1716],
+  "kinds": {
+    "counter": {
+      "label": "Mall counters",
+      "blurb": "Designer brands with testers at the mall."
+    },
+    "decant": {
+      "label": "Decant sellers",
+      "blurb": "Small samples so you can try before a full bottle."
+    },
+    "local-maker": {
+      "label": "Local makers",
+      "blurb": "Perfumes and oils made in GenSan and Mindanao."
+    }
+  },
+  "spots": [
+    {
+      "name": "KCC Mall of Gensan",
+      "kind": "counter",
+      "location": "Jose Catolico Sr. Ave, Dadiangas East",
+      "coords": [6.11658, 125.18649]
+    },
+    {
+      "name": "SM City General Santos",
+      "kind": "counter",
+      "location": "San Miguel St, Dadiangas East",
+      "coords": [6.11608, 125.18119]
+    },
+    {
+      "name": "Robinsons Place GenSan",
+      "kind": "counter",
+      "location": "Digos-Makar Road, Lagao",
+      "coords": [6.12121, 125.19094]
+    }
+  ]
+}
