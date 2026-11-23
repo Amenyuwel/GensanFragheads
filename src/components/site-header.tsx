@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useActiveSection } from "@/hooks/use-active-section";
-import { nav, sectionHref, site } from "@/lib/site";
+import { homeSectionIds, nav, site } from "@/lib/site";
 
 // Module-level so the hook gets the same array on every render.
-const sectionIds = nav.map((item) => item.id);
+const noSectionIds: string[] = [];
 
 export function SiteHeader() {
-  const active = useActiveSection(sectionIds);
+  const pathname = usePathname();
+  // Home sections only exist on the home page.
+  const active = useActiveSection(pathname === "/" ? homeSectionIds : noSectionIds);
 
   return (
     // Sticky only where there is room for it; on phones it would cover a sixth of the screen.
@@ -28,12 +31,12 @@ export function SiteHeader() {
       <nav aria-label="Main">
         <ul className="page-width flex flex-wrap justify-center gap-x-8 pb-2 text-sm tracking-[0.14em] uppercase">
           {nav.map((item) => {
-            const current = active === item.id;
+            const current = item.sectionId ? active === item.sectionId : pathname === item.href;
             return (
-              <li key={item.id}>
+              <li key={item.href}>
                 <a
-                  href={sectionHref(item.id)}
-                  aria-current={current ? "location" : undefined}
+                  href={item.href}
+                  aria-current={current ? (item.sectionId ? "location" : "page") : undefined}
                   className={`inline-block py-2.5 transition-colors ${
                     current ? "underline decoration-1 underline-offset-[0.5em]" : "text-muted hover:text-foreground"
                   }`}

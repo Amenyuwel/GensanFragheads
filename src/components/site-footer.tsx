@@ -1,6 +1,11 @@
-import { nav, sectionHref, site } from "@/lib/site";
+"use client";
+
+import { usePathname } from "next/navigation";
+import { nav, site } from "@/lib/site";
 
 export function SiteFooter() {
+  const pathname = usePathname();
+
   return (
     <footer className="mt-24 bg-green text-white">
       <div className="page-width grid gap-10 py-14 sm:grid-cols-3">
@@ -11,11 +16,15 @@ export function SiteFooter() {
           </p>
         </div>
         <div>
-          <h2 className="text-base tracking-[0.16em] uppercase">On this page</h2>
+          <h2 className="text-base tracking-[0.16em] uppercase">Explore</h2>
           <ul className="mt-4 space-y-2 text-lg text-white/70">
             {nav.map((item) => (
-              <li key={item.id}>
-                <a href={sectionHref(item.id)} className="hover:text-white">
+              <li key={item.href}>
+                <a
+                  href={item.href}
+                  aria-current={!item.sectionId && pathname === item.href ? "page" : undefined}
+                  className="hover:text-white"
+                >
                   {item.label}
                 </a>
               </li>
