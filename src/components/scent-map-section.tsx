@@ -1,7 +1,6 @@
 import { PageSection } from "@/components/page-section";
-import { ScentMap } from "@/components/scent-map";
+import { ScentMapExplorer } from "@/components/scent-map-explorer";
 import { SectionCta } from "@/components/section-cta";
-import { SpotList } from "@/components/spot-list";
 import { scentMap } from "@/lib/data";
 import { postTemplates, sections, submitUrl } from "@/lib/site";
 
@@ -12,10 +11,7 @@ export function ScentMapSection() {
       title="GenSan Scent Map"
       lead="Where to buy, test and decant in General Santos City. Entries come from members on the subreddit."
     >
-      <ScentMap spots={scentMap.spots} />
-      <div className="mt-16">
-        <SpotList />
-      </div>
+      <ScentMapExplorer spots={scentMap.spots} />
       <SectionCta
         prompt="Know a spot we missed? Post the place, the brands they carry, and whether they have testers."
         label="Suggest a spot"

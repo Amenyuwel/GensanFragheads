@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/button";
 import { SectionTitle } from "@/components/section-title";
 import { sectionHref, sections } from "@/lib/site";
+
+export const metadata: Metadata = { title: "Page not found" };
 
 export default function NotFound() {
   return (

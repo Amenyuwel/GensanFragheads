@@ -2,12 +2,14 @@
 
 :root {
   color-scheme: light;
-  --background: #ffffff;
+  --background: #faf7f2;
   --foreground: #1b1b1b;
   --muted: #555555;
-  --border: #e7e7e5;
-  --subtle: #f5f4f1;
+  --border: #d9d1c3;
+  --subtle: #f1ece3;
   --green: #2b3a2e;
+  /* Accent for solid buttons only, with white text (5:1). Too light for body text on the background. */
+  --brass: #8a6a2f;
 }
 
 @theme inline {
@@ -17,7 +19,13 @@
   --color-border: var(--border);
   --color-subtle: var(--subtle);
   --color-green: var(--green);
+  --color-brass: var(--brass);
   --font-sans: var(--font-jost);
+  /* The only two letter-spacings: small labels and buttons, and the site name. */
+  --tracking-label: 0.14em;
+  --tracking-brand: 0.24em;
+  /* The one vertical gap between page sections (pt-section, mt-section). */
+  --spacing-section: 7rem;
 }
 
 /* The one content width used across the site. */
@@ -33,7 +41,7 @@
 /* ---- Base ---- */
 
 html {
-  scrollbar-color: #bdbdb8 var(--background);
+  scrollbar-color: var(--border) var(--background);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -61,13 +69,16 @@ body {
 }
 
 /* On dark panels the green ring disappears, so switch to white. */
+.bg-green:focus-visible,
 .bg-green :focus-visible {
   outline-color: #fff;
 }
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
+  line-height: 1.2;
   text-wrap: balance;
 }
 
@@ -88,7 +99,12 @@ a {
   z-index: 0;
 }
 
-/* Muted tiles so the blue pins stand out. */
+/* Until a touch visitor taps "Tap to use the map", swipes over it scroll the page instead of panning the map. */
+.map-touch-locked .leaflet-container {
+  touch-action: pan-x pan-y;
+}
+
+/* Muted tiles so the green and brass pins stand out. */
 .leaflet-tile-pane {
   filter: grayscale(0.9) contrast(0.95) brightness(1.05);
 }
@@ -99,14 +115,25 @@ a {
   box-shadow: 0 6px 20px rgb(0 0 0 / 0.15);
 }
 
+/* The map is a size container so popups can stay inside it on phones. */
+.leaflet-container {
+  container-type: inline-size;
+}
+
+/* Inline width from Leaflet can't exceed this: map width minus 8px clearance each side (16px), the content's 20px side margins (40px) and Leaflet's wrapper border and rounding (4px). */
 .leaflet-popup-content {
   margin: 16px 20px;
+  max-width: calc(100cqw - 60px);
   line-height: 1.4;
 }
 
 /* Leaflet adds paragraph margins inside popups; spacing comes from the popup content instead. */
 .leaflet-popup-content p {
   margin: 0;
+}
+
+.leaflet-popup-content p:not(:first-child) {
+  margin-top: calc(var(--spacing) * 1);
 }
 
 /* Leaflet colors every link in the map blue; popup links follow the site link style instead. */
@@ -121,6 +148,21 @@ a {
   transition: transform 150ms ease-out;
 }
 
+.scent-pin-body {
+  fill: var(--green);
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.scent-pin-dot {
+  fill: #fff;
+}
+
+.scent-pin-selected .scent-pin-body {
+  fill: var(--brass);
+}
+
+.scent-pin-selected svg,
 .scent-pin:hover svg,
 .scent-pin:focus-visible svg {
   transform: scale(1.15);

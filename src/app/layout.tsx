@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Jost } from "next/font/google";
 import { AnnouncementBar } from "@/components/announcement-bar";
 import { SiteFooter } from "@/components/site-footer";
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: site.name,
   description: site.description,
+  alternates: { canonical: "/" },
   openGraph: {
     title: site.name,
     description: site.description,
@@ -29,13 +30,17 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: site.themeColor,
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${jost.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
         <a
           href="#main"
-          className="sr-only z-50 bg-green px-4 py-2 text-sm tracking-[0.12em] text-white uppercase focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+          className="sr-only z-50 bg-green text-sm tracking-label text-white uppercase focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:px-4 focus:py-3"
         >
           Skip to content
         </a>

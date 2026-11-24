@@ -2,16 +2,16 @@ import { nav, site } from "@/lib/site";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 bg-green text-white">
-      <div className="page-width grid gap-10 py-14 sm:grid-cols-3">
-        <div>
-          <p className="text-2xl tracking-[0.22em] uppercase">{site.name}</p>
+    <footer className="mt-section bg-green text-white">
+      <div className="page-width grid gap-10 py-12 sm:py-14 sm:grid-cols-3">
+        <div className="min-w-0">
+          <p className="text-xl tracking-brand break-words uppercase sm:text-2xl">{site.name}</p>
           <p className="mt-4 max-w-xs text-lg text-white/70">
-            A fragrance guide by and for perfume lovers in General Santos City.
+            By and for perfume lovers in General Santos City.
           </p>
         </div>
-        <div>
-          <h2 className="text-base tracking-[0.16em] uppercase">Explore</h2>
+        <div className="min-w-0">
+          <h2 className="text-base tracking-label uppercase">Explore</h2>
           <ul className="mt-4 space-y-2 text-lg text-white/70">
             {nav.map((item) => (
               <li key={item.href}>
@@ -22,8 +22,8 @@ export function SiteFooter() {
             ))}
           </ul>
         </div>
-        <div>
-          <h2 className="text-base tracking-[0.16em] uppercase">Community</h2>
+        <div className="min-w-0">
+          <h2 className="text-base tracking-label uppercase">Community</h2>
           <a href={site.subredditUrl} className="mt-4 inline-block text-lg text-white/70 hover:text-white">
             {site.subreddit}
           </a>

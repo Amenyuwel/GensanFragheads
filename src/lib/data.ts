@@ -1,6 +1,8 @@
 // Types for the JSON files in src/data. JSON can't carry types or comments, so they live here;
 // the field notes below are the reference for anyone editing the JSON by hand.
+import communityPostsJson from "@/data/community-posts.json";
 import scentMapJson from "@/data/scent-map.json";
+import { site } from "@/lib/site";
 
 export type SpotKind = "counter" | "decant" | "local-maker";
 
@@ -34,5 +36,22 @@ export const spotKinds = Object.keys(scentMap.kinds) as SpotKind[];
 for (const spot of scentMap.spots) {
   if (!spotKinds.includes(spot.kind)) {
     throw new Error(`scent-map.json: "${spot.name}" has kind "${spot.kind}". Use one of: ${spotKinds.join(", ")}.`);
+  }
+}
+
+export type CommunityPost = {
+  /** Shown as the link text if the Reddit embed can't load. */
+  title: string;
+  /** Full post address from the browser's address bar, not a /s/ share link. */
+  url: string;
+};
+
+export const communityPosts = communityPostsJson as CommunityPost[];
+
+for (const post of communityPosts) {
+  if (!post.url?.startsWith(`${site.subredditUrl}/comments/`)) {
+    throw new Error(
+      `community-posts.json: "${post.title}" has url "${post.url}". Use the full address, starting with ${site.subredditUrl}/comments/.`,
+    );
   }
 }

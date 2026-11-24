@@ -10,7 +10,7 @@ npm run dev     # http://localhost:3000
 npm run build   # static site in out/
 ```
 
-`out/` can be deployed to any static host (GitHub Pages, Cloudflare Pages, Netlify). Set `NEXT_PUBLIC_SITE_URL` (e.g. `https://example.com`) at build time so share previews get absolute URLs; it defaults to `http://localhost:3000`.
+`out/` can be deployed to any static host (GitHub Pages, Cloudflare Pages, Netlify). Set `NEXT_PUBLIC_SITE_URL` (e.g. `https://example.com`) at build time so share previews get absolute URLs; a production build fails without it. `npm run dev` works without it.
 
 ## Editing content
 
@@ -19,9 +19,11 @@ The home page is a single scrolling page: a hero, the Scent Map and a join call 
 | File | Section |
 | --- | --- |
 | `src/data/scent-map.json` | Scent Map spots, group names and descriptions, map center |
+| `src/data/community-posts.json` | Reddit posts to feature; the section is hidden while the list is empty |
 
 Field types and notes for these files are in `src/lib/data.ts`, which also checks the references when the site builds: an unknown `kind` fails the build with a message naming the entry. In short:
 
 - A spot needs `name`, `kind` (`counter`, `decant` or `local-maker`) and `location`. Add `coords` as `[latitude, longitude]` to pin it on the map (right-click a place on openstreetmap.org and choose Show address to get them); leave it out for online-only sellers. `notes` and `link` are optional.
+- A community post needs `title` and `url`. Open the post in a browser and copy the address bar; `/s/` share links fail the build. Posts are embedded by Reddit's script, with a plain link as fallback.
 
 Site name, subreddit link and the menu entries are in `src/lib/site.ts`.
