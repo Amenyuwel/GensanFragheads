@@ -9,7 +9,7 @@ import { directionsUrl } from "@/lib/directions";
 import "./leaflet-layer.css";
 
 // Leaflet's default marker images break under bundlers, so the pin is inline SVG.
-// Colors come from globals.css: site green with a white outline, brass when selected.
+// Colors come from globals.css: site ink with a white outline, saffron when selected.
 const pinOptions = {
   html: `<svg viewBox="0 0 32 42" width="32" height="42" aria-hidden="true">
     <path class="scent-pin-body" d="M16 1C7.7 1 1 7.7 1 16c0 10.6 15 25 15 25s15-14.4 15-25C31 7.7 24.3 1 16 1z"/>
@@ -48,9 +48,14 @@ function leftPanPadding(mapWidth: number | null) {
   return isNarrowMap(mapWidth) ? POPUP_PAN_PADDING_EDGE : POPUP_PAN_PADDING_LEFT;
 }
 
+// Height of the one-line tile-failure banner pinned to the top of the map.
+const TILE_BANNER_HEIGHT = 41;
+
 // A narrow popup spans the zoom control's columns, so it must sit below the control instead of beside it.
-function topPanPadding(mapWidth: number | null) {
-  return isNarrowMap(mapWidth) ? ZOOM_CONTROL_BOTTOM : POPUP_PAN_PADDING_EDGE;
+// A wide popup only has to clear the tile-failure banner, when it is showing.
+function topPanPadding(mapWidth: number | null, tilesFailed: boolean) {
+  if (isNarrowMap(mapWidth)) return ZOOM_CONTROL_BOTTOM;
+  return tilesFailed ? POPUP_PAN_PADDING_EDGE + TILE_BANNER_HEIGHT : POPUP_PAN_PADDING_EDGE;
 }
 
 // Popup height above the pin tip (anchor 38 + tip 7) plus a gap, for panning without animation.
@@ -61,6 +66,7 @@ type Props = {
   selectedName: string | null;
   focusRequest: FocusRequest | null;
   onSelect: (name: string | null) => void;
+  isLocked: boolean;
 };
 
 type PinnedSpot = Spot & { coords: [number, number] };
@@ -77,6 +83,20 @@ function CloseSpotPopupOnEscape() {
       if (event.originalEvent.key === "Escape") map.closePopup();
     },
   });
+  return null;
+}
+
+// Leaflet's drag handler cancels touchmove, so touch-action alone cannot let a swipe scroll the page.
+// Dragging is off while locked; mouse users have no overlay button, so they are never locked.
+function LockTouchDragging({ isLocked }: { isLocked: boolean }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!isLocked || !window.matchMedia("(pointer: coarse)").matches) return;
+    map.dragging.disable();
+    return () => {
+      map.dragging.enable();
+    };
+  }, [map, isLocked]);
   return null;
 }
 
@@ -142,13 +162,13 @@ function OpenRequestedPopup({
   return null;
 }
 
-export default function ScentMapView({ spots, selectedName, focusRequest, onSelect }: Props) {
+export default function ScentMapView({ spots, selectedName, focusRequest, onSelect, isLocked }: Props) {
   const markers = useRef(new Map<string, LeafletMarker>());
   const [reducedMotion] = useState(prefersReducedMotion);
   const [tilesFailed, setTilesFailed] = useState(false);
   const [mapWidth, setMapWidth] = useState<number | null>(null);
   const panPaddingLeft = leftPanPadding(mapWidth);
-  const panPaddingTop = topPanPadding(mapWidth);
+  const panPaddingTop = topPanPadding(mapWidth, tilesFailed);
   const pinned = spots.filter((s): s is PinnedSpot => s.coords !== undefined);
   // With two or more pins, fit them all in view; otherwise center on the one pin or the city.
   const bounds =
@@ -171,6 +191,7 @@ export default function ScentMapView({ spots, selectedName, focusRequest, onSele
         />
         <CloseSpotPopupOnEscape />
         <KeepMapSized onWidthChange={setMapWidth} />
+        <LockTouchDragging isLocked={isLocked} />
         {reducedMotion && (
           <PanPopupIntoViewWithoutAnimation paddingLeft={panPaddingLeft} paddingTop={panPaddingTop} />
         )}
@@ -214,7 +235,7 @@ export default function ScentMapView({ spots, selectedName, focusRequest, onSele
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Get directions to ${spot.name}`}
-                className="mt-2 inline-block text-base underline"
+                className="mt-3 inline-flex min-h-11 items-center rounded-control bg-accent px-5 text-base font-medium hover:bg-accent-bright"
               >
                 Get directions
               </a>
@@ -226,7 +247,7 @@ export default function ScentMapView({ spots, selectedName, focusRequest, onSele
       {tilesFailed && (
         <p
           role="status"
-          className="absolute inset-x-0 top-0 z-[1000] bg-background px-4 py-2 text-center text-base"
+          className="absolute inset-x-0 top-0 z-[1000] border-b border-border bg-background px-4 py-2 text-center text-base"
         >
           The map could not load. Use the list instead.
         </p>

@@ -1,7 +1,7 @@
 import { CommunityPosts } from "@/components/community-posts";
 import { PageSection } from "@/components/page-section";
 import { communityPosts } from "@/lib/data";
-import { sections, site } from "@/lib/site";
+import { sections } from "@/lib/site";
 
 /** Hand-picked subreddit posts. Hidden until community-posts.json has entries. */
 export function CommunitySection() {
@@ -10,7 +10,7 @@ export function CommunitySection() {
     <PageSection
       id={sections.community.id}
       title={sections.community.label}
-      lead={`A few picks from members on ${site.subreddit}.`}
+      lead="A few picks from members."
     >
       <CommunityPosts posts={communityPosts} />
     </PageSection>

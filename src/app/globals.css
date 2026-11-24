@@ -1,15 +1,21 @@
 @import "tailwindcss";
 
+/*
+ * Direction "Night market": warm paper, ink-plum, one saffron accent, pill controls, soft panels,
+ * a serif display face for headings and left-aligned composition.
+ */
 :root {
   color-scheme: light;
-  --background: #faf7f2;
-  --foreground: #1b1b1b;
-  --muted: #555555;
-  --border: #d9d1c3;
-  --subtle: #f1ece3;
-  --green: #2b3a2e;
-  /* Accent for solid buttons only, with white text (5:1). Too light for body text on the background. */
-  --brass: #8a6a2f;
+  --background: #f7f1e8;
+  --foreground: #231a2e;
+  --muted: #5b4f66;
+  --border: #d2c5b3;
+  --subtle: #ece2d3;
+  /* Dark surfaces: hero, footer, skip link. White text on it is 15:1. */
+  --ink: #231a2e;
+  /* Saffron. Fill for buttons, bars and highlights, always with ink text (8.6:1). Never for text on the paper background. */
+  --accent: #f2a93b;
+  --accent-bright: #ffc86b;
 }
 
 @theme inline {
@@ -18,14 +24,34 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-subtle: var(--subtle);
-  --color-green: var(--green);
-  --color-brass: var(--brass);
+  --color-ink: var(--ink);
+  --color-accent: var(--accent);
+  --color-accent-bright: var(--accent-bright);
+
   --font-sans: var(--font-jost);
-  /* The only two letter-spacings: small labels and buttons, and the site name. */
-  --tracking-label: 0.14em;
-  --tracking-brand: 0.24em;
+  --font-display: var(--font-fraunces);
+  /* Type scale. Body is 1.125rem (set on body), lead 1.25rem (text-xl), card titles 1.25 to 1.5rem (text-xl, text-2xl). */
+  --text-display: clamp(2rem, 1.2rem + 4.2vw, 4.5rem);
+  --text-display--line-height: 1.05;
+  --text-title: clamp(1.875rem, 1.4rem + 2vw, 3rem);
+  --text-title--line-height: 1.1;
+  /* The one letter-spacing: small uppercase labels. */
+  --tracking-label: 0.1em;
   /* The one vertical gap between page sections (pt-section, mt-section). */
-  --spacing-section: 7rem;
+  --spacing-section: 6rem;
+  /* Radius: pill for every button and chip, panel for cards and big surfaces. */
+  --radius-control: 9999px;
+  --radius-panel: 1.5rem;
+}
+
+/* Motion: one duration and easing for hover and colour changes. Reduced motion makes them instant. */
+@utility transition-ui {
+  transition-property: color, background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0s;
+  }
 }
 
 /* The one content width used across the site. */
@@ -55,29 +81,31 @@ body {
   color: var(--foreground);
   font-size: 1.125rem;
   line-height: 1.7;
-  caret-color: var(--green);
+  caret-color: var(--ink);
 }
 
 ::selection {
-  background: var(--green);
-  color: #fff;
+  background: var(--ink);
+  color: var(--background);
 }
 
 :focus-visible {
-  outline: 2px solid var(--green);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
 
-/* On dark panels the green ring disappears, so switch to white. */
-.bg-green:focus-visible,
-.bg-green :focus-visible {
-  outline-color: #fff;
+/* On dark surfaces the ink ring disappears, so switch to saffron. */
+.bg-ink:focus-visible,
+.bg-ink :focus-visible {
+  outline-color: var(--accent);
 }
 
 h1,
 h2,
 h3,
 h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
   line-height: 1.2;
   text-wrap: balance;
 }
@@ -104,15 +132,63 @@ a {
   touch-action: pan-x pan-y;
 }
 
-/* Muted tiles so the green and brass pins stand out. */
+/* Muted tiles so the ink and saffron pins stand out. */
 .leaflet-tile-pane {
   filter: grayscale(0.9) contrast(0.95) brightness(1.05);
 }
 
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: 0 6px 20px rgb(35 26 46 / 0.25);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-panel);
+}
+
+/* 44px touch target; the popup content's 20px margin plus the label's pr-6 keep text clear of it. */
+.leaflet-container a.leaflet-popup-close-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 44px;
+  color: var(--foreground);
+}
+
+/* Zoom control: same 34px footprint (the popup padding in scent-map-view.tsx depends on it), rounded, ink outline. */
+.leaflet-bar {
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-panel);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.leaflet-bar a,
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+  background-color: var(--background);
   border-radius: 0;
-  box-shadow: 0 6px 20px rgb(0 0 0 / 0.15);
+  color: var(--foreground);
+}
+
+.leaflet-bar a:hover {
+  background-color: var(--accent);
+}
+
+.leaflet-bar a:focus-visible {
+  outline-offset: -4px;
+}
+
+.leaflet-container .leaflet-control-attribution {
+  background: color-mix(in srgb, var(--background) 90%, transparent);
+  color: var(--muted);
+}
+
+.leaflet-control-attribution a {
+  color: var(--foreground);
 }
 
 /* The map is a size container so popups can stay inside it on phones. */
@@ -149,17 +225,22 @@ a {
 }
 
 .scent-pin-body {
-  fill: var(--green);
-  stroke: #fff;
+  fill: var(--ink);
+  stroke: var(--background);
   stroke-width: 2;
 }
 
 .scent-pin-dot {
-  fill: #fff;
+  fill: var(--background);
 }
 
 .scent-pin-selected .scent-pin-body {
-  fill: var(--brass);
+  fill: var(--accent);
+  stroke: var(--ink);
+}
+
+.scent-pin-selected .scent-pin-dot {
+  fill: var(--ink);
 }
 
 .scent-pin-selected svg,

@@ -13,7 +13,7 @@ export function ScentMapSection() {
     >
       <ScentMapExplorer spots={scentMap.spots} />
       <SectionCta
-        prompt="Know a spot we missed? Post the place, the brands they carry, and whether they have testers."
+        prompt="Know a spot we missed, like a decant seller or local maker? Post the place, the brands they carry, and whether they have testers."
         label="Suggest a spot"
         href={submitUrl("Scent Map suggestion: ", postTemplates.spot)}
       />

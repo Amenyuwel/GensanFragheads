@@ -24,14 +24,14 @@ export function ScentMapExplorer({ spots }: { spots: Spot[] }) {
 
   return (
     <>
-      <div role="group" aria-label="Choose a view" className="mb-6 flex border border-foreground md:hidden">
+      <div role="group" aria-label="Choose a view" className="mb-6 flex rounded-control border-2 border-foreground md:hidden">
         {(["list", "map"] as const).map((option) => (
           <button
             key={option}
             type="button"
             aria-pressed={view === option}
             onClick={() => setView(option)}
-            className={`min-h-11 flex-1 text-sm tracking-label uppercase ${
+            className={`min-h-11 flex-1 rounded-control text-sm tracking-label uppercase transition-ui ${
               view === option ? "bg-foreground text-background" : ""
             }`}
           >

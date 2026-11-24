@@ -18,8 +18,8 @@ export const site = {
   subredditUrl: "https://www.reddit.com/r/GenSanFragheads",
   /** Public origin, needed for absolute share-preview URLs. */
   url: siteUrl(),
-  /** Brand green (--green in globals.css), used for the browser UI colour and the web manifest. */
-  themeColor: "#2b3a2e",
+  /** Brand ink (--ink in globals.css), used for the browser UI colour and the web manifest. */
+  themeColor: "#231a2e",
 };
 
 /** The home page's sections. `id` is both the element id and the anchor the nav links to. */

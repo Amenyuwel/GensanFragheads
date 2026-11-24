@@ -65,9 +65,9 @@ export function ScentMap({ spots, selectedName, focusRequest, onSelect }: Props)
   }, [isTouchActive]);
 
   return (
-    <div ref={containerRef} className={`relative h-[420px] w-full scroll-mt-24 border border-border sm:h-[520px] ${isTouchActive ? "" : "map-touch-locked"}`}>
+    <div ref={containerRef} className={`relative h-105 w-full scroll-mt-24 overflow-hidden rounded-panel border border-border sm:h-130 ${isTouchActive ? "" : "map-touch-locked"}`}>
       {shouldLoad ? (
-        <ScentMapView spots={spots} selectedName={selectedName} focusRequest={focusRequest} onSelect={onSelect} />
+        <ScentMapView spots={spots} selectedName={selectedName} focusRequest={focusRequest} onSelect={onSelect} isLocked={!isTouchActive} />
       ) : (
         placeholder
       )}
@@ -77,7 +77,7 @@ export function ScentMap({ spots, selectedName, focusRequest, onSelect }: Props)
         <button
           type="button"
           onClick={() => setIsTouchActive(true)}
-          className="absolute bottom-4 left-1/2 z-[1100] hidden -translate-x-1/2 bg-background px-3 py-2 text-sm tracking-label whitespace-nowrap uppercase pointer-coarse:block"
+          className="absolute bottom-4 left-1/2 z-1100 hidden min-h-11 -translate-x-1/2 items-center rounded-control bg-ink px-5 text-sm tracking-label whitespace-nowrap text-white uppercase pointer-coarse:flex"
         >
           Tap to use the map
         </button>

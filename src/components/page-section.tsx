@@ -8,7 +8,7 @@ export function PageSection({ id, title, lead, children }: Props) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="page-width pt-section">
       <SectionTitle id={`${id}-title`}>{title}</SectionTitle>
-      <p className="mx-auto mt-5 max-w-2xl text-center text-xl text-muted">{lead}</p>
+      <p className="mt-5 max-w-2xl text-xl text-muted">{lead}</p>
       <div className="mt-12">{children}</div>
     </section>
   );

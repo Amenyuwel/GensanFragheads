@@ -6,9 +6,9 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const dynamic = "force-static";
 
-// Satori can't read CSS variables or next/font, so the brand green (--green in globals.css)
+// Satori can't read CSS variables or next/font, so the brand ink (--ink in globals.css)
 // is repeated here and Jost is fetched as a TTF at build time.
-const brandGreen = "#2b3a2e";
+const brandInk = "#231a2e";
 
 async function loadJost(weight: number) {
   const css = await (
@@ -32,11 +32,12 @@ export default async function Image() {
           flexDirection: "column",
           justifyContent: "center",
           padding: 96,
-          background: brandGreen,
+          background: brandInk,
           color: "#ffffff",
           fontFamily: "Jost",
         }}
       >
+        <div style={{ width: 96, height: 8, borderRadius: 4, background: "#f2a93b", marginBottom: 40 }} />
         <div style={{ fontSize: 108, fontWeight: 500, lineHeight: 1.1 }}>{site.name}</div>
         <div style={{ fontSize: 44, fontWeight: 400, lineHeight: 1.4, marginTop: 32 }}>
           {site.description}
