@@ -1,13 +1,21 @@
 @import "tailwindcss";
 
+/*
+ * Direction "Night market": warm paper, ink-plum, one saffron accent, pill controls, soft panels,
+ * a serif display face for headings and left-aligned composition.
+ */
 :root {
   color-scheme: light;
-  --background: #ffffff;
-  --foreground: #1b1b1b;
-  --muted: #555555;
-  --border: #e7e7e5;
-  --subtle: #f5f4f1;
-  --green: #2b3a2e;
+  --background: #f7f1e8;
+  --foreground: #231a2e;
+  --muted: #5b4f66;
+  --border: #d2c5b3;
+  --subtle: #ece2d3;
+  /* Dark surfaces: hero, footer, skip link. White text on it is 15:1. */
+  --ink: #231a2e;
+  /* Saffron. Fill for buttons, bars and highlights, always with ink text (8.6:1). Never for text on the paper background. */
+  --accent: #f2a93b;
+  --accent-bright: #ffc86b;
 }
 
 @theme inline {
@@ -16,8 +24,271 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-subtle: var(--subtle);
-  --color-green: var(--green);
+  --color-ink: var(--ink);
+  --color-accent: var(--accent);
+  --color-accent-bright: var(--accent-bright);
+
   --font-sans: var(--font-jost);
+  --font-display: var(--font-fraunces);
+  /* Type scale. Body is 1.125rem (set on body), lead 1.25rem (text-xl), card titles 1.25 to 1.5rem (text-xl, text-2xl). */
+  --text-display: clamp(2rem, 1.2rem + 4.2vw, 4.5rem);
+  --text-display--line-height: 1.05;
+  --text-title: clamp(1.875rem, 1.4rem + 2vw, 3rem);
+  --text-title--line-height: 1.1;
+  /* The one letter-spacing: small uppercase labels. */
+  --tracking-label: 0.1em;
+  /* The one vertical gap between page sections (pt-section, mt-section). */
+  --spacing-section: 6rem;
+  /* Radius: pill for every button and chip, panel for cards and big surfaces. */
+  --radius-control: 9999px;
+  --radius-panel: 1.5rem;
+}
+
+/* Motion: one duration and easing for hover and colour changes. Reduced motion makes them instant. */
+@utility transition-ui {
+  transition-property: color, background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0s;
+  }
+}
+
+/*
+ * Parallax and entrance motion. Shared values: --motion-travel is how far a layer drifts over its
+ * scroll range (smaller on phones), --motion-enter-* shape load-in animations. Only transform and
+ * opacity move. Browsers without animation-timeline, or with reduced motion, keep the static layout.
+ */
+:root {
+  --motion-travel: 4rem;
+  --motion-enter-distance: 1rem;
+  --motion-enter-duration: 400ms;
+  --motion-enter-stagger: 100ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (width < 40rem) {
+  :root {
+    --motion-travel: 2rem;
+  }
+}
+
+@keyframes enter-up {
+  from {
+    transform: translateY(var(--motion-enter-distance));
+  }
+}
+
+@keyframes enter-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-enter-distance));
+  }
+}
+
+@keyframes drift-down {
+  to {
+    transform: translateY(var(--motion-travel));
+  }
+}
+
+@keyframes drift-up {
+  to {
+    transform: translateY(calc(var(--motion-travel) * -0.4));
+  }
+}
+
+@keyframes drift-across {
+  from {
+    transform: translateY(calc(var(--motion-travel) * -1));
+  }
+  to {
+    transform: translateY(var(--motion-travel));
+  }
+}
+
+@keyframes drift-across-reverse {
+  from {
+    transform: translateY(calc(var(--motion-travel) * 0.6));
+  }
+  to {
+    transform: translateY(calc(var(--motion-travel) * -0.6));
+  }
+}
+
+/* Hero media sits taller than its panel by one travel distance so the drift never exposes an edge. */
+.hero-media {
+  position: absolute;
+  inset: calc(var(--motion-travel) * -1) 0 0;
+}
+
+/* Soft saffron glows behind the Join panel text. Faint enough to keep white text above 4.5:1. */
+.join-shape {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0.2;
+  background: radial-gradient(closest-side, var(--accent-bright), transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Load-in for the hero heading, text and buttons. The heading keeps full opacity for LCP. */
+  .hero-enter,
+  .hero-enter-fade {
+    animation: var(--motion-enter-duration) var(--motion-ease) backwards;
+    animation-delay: calc(var(--enter-step, 0) * var(--motion-enter-stagger));
+  }
+  .hero-enter {
+    animation-name: enter-up;
+  }
+  .hero-enter-fade {
+    animation-name: enter-up-fade;
+  }
+
+  @supports (animation-timeline: view()) {
+    .hero-media,
+    .hero-text,
+    .join-shape {
+      animation-timing-function: linear;
+    }
+    /* Separate rule on purpose: the build minifier merges these longhands into a shorthand and emits `animation: none`. */
+    .hero-media,
+    .hero-text,
+    .join-shape {
+      animation-fill-mode: both;
+    }
+    /* The hero starts at the top of the page, so its range is the first stretch of scrolling. */
+    .hero-media,
+    .hero-text {
+      animation-timeline: scroll(root);
+      animation-range: 0 40rem;
+    }
+    .hero-media {
+      animation-name: drift-down;
+    }
+    .hero-text {
+      animation-name: drift-up;
+    }
+    .join-shape {
+      animation-timeline: view();
+      animation-range: cover;
+      animation-name: drift-across;
+    }
+    .join-shape-reverse {
+      animation-name: drift-across-reverse;
+    }
+  }
+}
+
+/*
+ * Scroll reveals and hover lifts. Everything is plain by default; the motion below only exists with
+ * motion allowed. Reveals use fill-mode backwards, so once the range ends nothing is held and hover
+ * transforms work. Only transform and opacity move (hover shadows aside). Never put these on the map or the embed.
+ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--motion-enter-distance) * 1.5));
+  }
+}
+
+@keyframes grow-across {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.scroll-progress {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion-lift {
+    transition-property: color, background-color, border-color, transform;
+  }
+  .arrow-nudge {
+    transition: transform 150ms ease-out;
+  }
+  a:hover > .arrow-nudge,
+  a:focus-visible > .arrow-nudge {
+    transform: translate(2px, -2px);
+  }
+
+  @media (hover: hover) {
+    .motion-lift:hover {
+      transform: translateY(-2px);
+    }
+    .spot-card {
+      transition:
+        transform 200ms var(--motion-ease),
+        box-shadow 200ms var(--motion-ease);
+    }
+    .spot-card:hover,
+    .spot-card:focus-within {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgb(35 26 46 / 0.15);
+    }
+  }
+
+  /* After the hover rule (same specificity) so a pressed button shows the press, not the lift. */
+  .motion-lift:active {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  @supports (animation-timeline: view()) {
+    .page-section > h2,
+    .page-section > p,
+    .spot-card,
+    .info-card {
+      animation-timing-function: linear;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    /* Separate rule on purpose, see the hero fill-mode note above. */
+    .page-section > h2,
+    .page-section > p,
+    .spot-card,
+    .info-card {
+      animation-fill-mode: backwards;
+    }
+    .page-section > h2,
+    .page-section > p,
+    .spot-card,
+    .info-card {
+      animation-name: reveal-up;
+      animation-timing-function: var(--motion-ease);
+    }
+    /* Light stagger: later cards in a row start a little further into the scroll. */
+    .spot-card,
+    .info-card {
+      animation-range: entry calc(var(--reveal-step, 0) * 10%) entry calc(60% + var(--reveal-step, 0) * 10%);
+    }
+    .spot-card:nth-child(3n + 2),
+    .info-card:nth-child(3n + 2) {
+      --reveal-step: 1;
+    }
+    .spot-card:nth-child(3n),
+    .info-card:nth-child(3n) {
+      --reveal-step: 2;
+    }
+
+    @media (width >= 48rem) {
+      .scroll-progress {
+        display: block;
+        position: absolute;
+        inset: auto 0 -1px;
+        height: calc(var(--spacing) * 0.75);
+        background: var(--accent);
+        transform-origin: left;
+        pointer-events: none;
+        animation: grow-across linear both;
+        animation-timeline: scroll(root);
+      }
+    }
+  }
 }
 
 /* The one content width used across the site. */
@@ -33,7 +304,7 @@
 /* ---- Base ---- */
 
 html {
-  scrollbar-color: #bdbdb8 var(--background);
+  scrollbar-color: var(--border) var(--background);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -47,27 +318,32 @@ body {
   color: var(--foreground);
   font-size: 1.125rem;
   line-height: 1.7;
-  caret-color: var(--green);
+  caret-color: var(--ink);
 }
 
 ::selection {
-  background: var(--green);
-  color: #fff;
+  background: var(--ink);
+  color: var(--background);
 }
 
 :focus-visible {
-  outline: 2px solid var(--green);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
 
-/* On dark panels the green ring disappears, so switch to white. */
-.bg-green :focus-visible {
-  outline-color: #fff;
+/* On dark surfaces the ink ring disappears, so switch to saffron. */
+.bg-ink:focus-visible,
+.bg-ink :focus-visible {
+  outline-color: var(--accent);
 }
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.2;
   text-wrap: balance;
 }
 
@@ -88,25 +364,94 @@ a {
   z-index: 0;
 }
 
-/* Muted tiles so the blue pins stand out. */
+/* Until a touch visitor taps "Tap to use the map", swipes over it scroll the page instead of panning the map. */
+.map-touch-locked .leaflet-container {
+  touch-action: pan-x pan-y;
+}
+
+/* Muted tiles so the ink and saffron pins stand out. */
 .leaflet-tile-pane {
   filter: grayscale(0.9) contrast(0.95) brightness(1.05);
 }
 
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  border-radius: 0;
-  box-shadow: 0 6px 20px rgb(0 0 0 / 0.15);
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: 0 6px 20px rgb(35 26 46 / 0.25);
 }
 
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-panel);
+}
+
+/* 44px touch target; the popup content's 20px margin plus the label's pr-6 keep text clear of it. */
+.leaflet-container a.leaflet-popup-close-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 44px;
+  color: var(--foreground);
+}
+
+/* Zoom control: same 34px footprint (the popup padding in scent-map-view.tsx depends on it), rounded, ink outline. */
+.leaflet-bar {
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-panel);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.leaflet-bar a,
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+  background-color: var(--background);
+  border-radius: 0;
+  color: var(--foreground);
+}
+
+.leaflet-bar a:hover {
+  background-color: var(--accent);
+}
+
+.leaflet-bar a:focus-visible {
+  outline-offset: -4px;
+}
+
+.leaflet-container .leaflet-control-attribution {
+  background: color-mix(in srgb, var(--background) 90%, transparent);
+  color: var(--muted);
+}
+
+.leaflet-control-attribution a {
+  color: var(--foreground);
+}
+
+/* The map is a size container so popups can stay inside it on phones. */
+.leaflet-container {
+  container-type: inline-size;
+}
+
+/* Inline width from Leaflet can't exceed this: map width minus 8px clearance each side (16px), the content's 20px side margins (40px) and Leaflet's wrapper border and rounding (4px). */
 .leaflet-popup-content {
   margin: 16px 20px;
+  max-width: calc(100cqw - 60px);
   line-height: 1.4;
 }
 
 /* Leaflet adds paragraph margins inside popups; spacing comes from the popup content instead. */
 .leaflet-popup-content p {
   margin: 0;
+}
+
+.leaflet-popup-content p:not(:first-child) {
+  margin-top: calc(var(--spacing) * 1);
+}
+
+/* Leaflet colors every link in the map blue; popup links follow the site link style instead. */
+.leaflet-popup-content a {
+  color: var(--foreground);
 }
 
 .scent-pin svg {
@@ -116,7 +461,56 @@ a {
   transition: transform 150ms ease-out;
 }
 
+.scent-pin-body {
+  fill: var(--ink);
+  stroke: var(--background);
+  stroke-width: 2;
+}
+
+.scent-pin-dot {
+  fill: var(--background);
+}
+
+.scent-pin-selected .scent-pin-body {
+  fill: var(--accent);
+  stroke: var(--ink);
+}
+
+.scent-pin-selected .scent-pin-dot {
+  fill: var(--ink);
+}
+
+.scent-pin-selected svg,
 .scent-pin:hover svg,
 .scent-pin:focus-visible svg {
   transform: scale(1.15);
+}
+
+/* Saffron band with a broad wave edge above and below it, drawn as masked ::before/::after strips. Decorative, so pure CSS. */
+.wave-band {
+  position: relative;
+}
+
+.wave-band::before,
+.wave-band::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3rem;
+  pointer-events: none;
+  background-color: var(--accent);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+/* The 1px overlap with the band hides any seam from sub-pixel rounding. */
+.wave-band::before {
+  bottom: calc(100% - 1px);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'%3E%3Cpath d='M0 30C200 -6 360 8 560 28S900 52 1100 24S1340 6 1440 22V48H0Z'/%3E%3C/svg%3E");
+}
+
+.wave-band::after {
+  top: calc(100% - 1px);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1440V24C1260 54 1080 40 880 20S520 -4 340 22S100 44 0 26Z'/%3E%3C/svg%3E");
 }

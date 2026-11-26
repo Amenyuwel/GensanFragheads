@@ -1,13 +1,13 @@
 import { site } from "@/lib/site";
 
-/** Thin green strip above the header that points visitors to the subreddit. */
+/** Thin saffron strip above the header that points visitors to the subreddit. */
 export function AnnouncementBar() {
   return (
-    <div className="bg-green px-4 py-2 text-center text-sm tracking-[0.12em] text-white/85 uppercase">
-      <a href={site.subredditUrl} className="hover:text-white">
-        <span className="sm:hidden">Post your SOTD on {site.subreddit}</span>
-        <span className="hidden sm:inline">Post your Scent of the Day on {site.subreddit}</span>
+    <aside aria-label="Announcement" className="bg-accent px-4 py-1 text-center text-sm font-medium text-ink">
+      <a href={site.subredditUrl} className="inline-block py-1.5 underline hover:no-underline">
+        <span className="sm:hidden">Post your SOTD</span>
+        <span className="hidden sm:inline">Post your Scent of the Day</span>
       </a>
-    </div>
+    </aside>
   );
 }
