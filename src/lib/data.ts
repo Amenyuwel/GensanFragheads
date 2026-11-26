@@ -48,6 +48,9 @@ export type CommunityPost = {
 
 export const communityPosts = communityPostsJson as CommunityPost[];
 
+/** The community section and its nav link are hidden while community-posts.json is empty. */
+export const hasCommunityPosts = communityPosts.length > 0;
+
 for (const post of communityPosts) {
   if (!post.url?.startsWith(`${site.subredditUrl}/comments/`)) {
     throw new Error(

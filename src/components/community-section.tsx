@@ -1,11 +1,11 @@
 import { CommunityPosts } from "@/components/community-posts";
 import { PageSection } from "@/components/page-section";
-import { communityPosts } from "@/lib/data";
+import { communityPosts, hasCommunityPosts } from "@/lib/data";
 import { sections, site } from "@/lib/site";
 
 /** Hand-picked subreddit posts. Hidden until community-posts.json has entries. */
 export function CommunitySection() {
-  if (communityPosts.length === 0) return null;
+  if (!hasCommunityPosts) return null;
   return (
     <PageSection
       band

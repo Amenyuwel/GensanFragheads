@@ -10,13 +10,13 @@ The site is one scrolling page. This tour follows it from top to bottom. Desktop
 
 ### Header and menu
 
-A saffron strip at the very top links to the subreddit to post your Scent of the Day. Below it, the header has the site name (back to the top of the page), a **Scent Map** link that jumps to the map, and a **Join** button that opens the subreddit. On desktop the header stays pinned while you scroll, and **Scent Map** is highlighted while the map section is on screen.
+A saffron strip at the very top links to the subreddit to post your Scent of the Day. Below it, the header has the site name (back to the top of the page), **Scent Map** and **From the community** links that jump to those sections, and a **Join** button that opens the subreddit. **From the community** is only listed while there are community posts to show. On desktop the header stays pinned while you scroll, and each menu link is highlighted while its section is on screen.
 
-![Desktop header: "Post your Scent of the Day" strip, site name, Scent Map link and Join button](docs/screenshots/header-desktop.png)
+![Desktop header: "Post your Scent of the Day" strip, site name, Scent Map and From the community links, and Join button](docs/screenshots/header-desktop.png)
 
 On a phone the strip reads "Post your SOTD", the menu wraps under the site name, and the header scrolls away with the page.
 
-<img src="docs/screenshots/header-mobile.png" width="375" alt="Phone header: SOTD strip, site name, and the Scent Map and Join links on a second line">
+<img src="docs/screenshots/header-mobile.png" width="375" alt="Phone header: SOTD strip, site name, and the Scent Map, From the community and Join links on a second line">
 
 ### Hero
 
@@ -100,4 +100,4 @@ Field types and notes for these files are in `src/lib/data.ts`, which also check
 - A spot needs `name`, `kind` (`counter`, `decant` or `local-maker`) and `location`. Add `coords` as `[latitude, longitude]` to pin it on the map (right-click a place on openstreetmap.org and choose Show address to get them); leave it out for online-only sellers. `notes` and `link` are optional.
 - A community post needs `title` and `url`. Open the post in a browser and copy the address bar; `/s/` share links fail the build. Posts are embedded by Reddit's script, with a plain link as fallback.
 
-Site name, subreddit link and the menu entries are in `src/lib/site.ts`.
+Site name, subreddit link and the section labels are in `src/lib/site.ts`. The menu order is in `src/lib/nav.ts`.
