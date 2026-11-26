@@ -4,6 +4,19 @@ One-page static website for the [r/GenSanFragheads](https://www.reddit.com/r/Gen
 
 Live site: <https://gensanfragheads.pages.dev> (Cloudflare Pages, deployed from `main`).
 
+The whole home page on desktop (1440px wide) and on a phone (375px wide). Select an image to open it full size.
+
+<table>
+  <tr>
+    <td valign="top">
+      <a href="docs/screenshots/home-desktop-full.png"><img src="docs/screenshots/home-desktop-full.png" width="600" alt="Full desktop home page from the Scent of the Day strip to the footer: header, hero, Scent Map with pins and Mall counters cards, From the community, Know a spot we missed, Join the conversation and footer"></a>
+    </td>
+    <td valign="top">
+      <a href="docs/screenshots/home-mobile-full.png"><img src="docs/screenshots/home-mobile-full.png" width="150" alt="Full phone home page from the SOTD strip to the footer, with the Scent Map in its default List view"></a>
+    </td>
+  </tr>
+</table>
+
 ## Visitor walkthrough
 
 The site is one scrolling page. This tour follows it from top to bottom. Desktop screenshots are at 1440px wide, phone screenshots at 375px.
