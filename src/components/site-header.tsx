@@ -9,24 +9,37 @@ import { homeSectionIds, nav, site } from "@/lib/site";
 // Module-level so the hook gets the same array on every render.
 const noSectionIds: string[] = [];
 
-// Next keeps the scroll position when the target page is already visible in the viewport, so a
-// same-page "/" navigation would otherwise leave the visitor scrolled down. Modified clicks open
-// a new tab and must not scroll this one. Instant, because a smooth scroll is cut short when the 404 page swaps to home.
-function scrollToTopOnPlainClick(event: MouseEvent<HTMLAnchorElement>) {
+// Modified clicks open a new tab and must not scroll this one.
+function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
   const isModified = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
-  if (isModified || event.button !== 0) return;
-  window.scrollTo({ top: 0, behavior: "instant" });
+  return !isModified && event.button === 0;
 }
 
 export function SiteHeader() {
   const pathname = usePathname();
   // Home sections only exist on the home page.
-  const active = useActiveSection(pathname === "/" ? homeSectionIds : noSectionIds);
+  const isHome = pathname === "/";
+  const active = useActiveSection(isHome ? homeSectionIds : noSectionIds);
+
+  function handleNameClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (!isPlainClick(event)) return;
+    if (!isHome) {
+      // Instant: a smooth scroll is cut short when another page (e.g. the 404 page) swaps to home.
+      window.scrollTo({ top: 0, behavior: "instant" });
+      return;
+    }
+    // Already home: skip Next's same-page navigation, which would jump or interrupt the scroll.
+    // "auto" follows the CSS scroll-behavior, which is smooth unless reduced motion is requested.
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: "auto" });
+    // Drop a section hash such as #scent-map so the URL matches the top of the page.
+    if (window.location.hash) window.history.replaceState(null, "", "/");
+  }
 
   return (
     <header className="z-30 border-b border-foreground bg-background md:sticky md:top-0">
       <div className="page-width flex flex-wrap items-center justify-between gap-x-6 gap-y-0 py-2 sm:py-3">
-        <Link href="/" onClick={scrollToTopOnPlainClick} className="font-display text-xl font-medium sm:text-2xl">
+        <Link href="/" onClick={handleNameClick} className="font-display text-xl font-medium sm:text-2xl">
           {site.name}
         </Link>
         <nav aria-label="Main">
@@ -48,13 +61,14 @@ export function SiteHeader() {
               );
             })}
             <li>
-              <a href={site.subredditUrl} className="inline-flex min-h-11 items-center rounded-control bg-accent px-4 text-ink transition-ui hover:bg-accent-bright">
+              <a href={site.subredditUrl} className="inline-flex min-h-11 items-center rounded-control bg-accent px-4 text-ink transition-ui motion-lift hover:bg-accent-bright">
                 Join
               </a>
             </li>
           </ul>
         </nav>
       </div>
+      <span aria-hidden="true" className="scroll-progress" />
     </header>
   );
 }

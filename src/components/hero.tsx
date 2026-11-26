@@ -46,26 +46,30 @@ export function Hero() {
   return (
     <section className="page-width pt-3 sm:pt-6" aria-labelledby="hero-title">
       <div className="relative overflow-hidden rounded-panel bg-ink">
-        <video
-          ref={video}
-          poster={POSTER}
-          muted
-          loop
-          playsInline
-          preload="none"
-          aria-hidden="true"
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        {/* The footage is mostly white, so darken it enough for white text to stay readable. */}
-        <div aria-hidden="true" className="absolute inset-0 bg-ink/75" />
-        <div className="relative flex min-h-104 flex-col justify-end px-6 pt-16 pb-6 text-white sm:min-h-120 sm:p-12 sm:pt-24">
-          <h1 id="hero-title" className="max-w-3xl text-display">
+        <div className="hero-media">
+          <video
+            ref={video}
+            poster={POSTER}
+            muted
+            loop
+            playsInline
+            preload="none"
+            aria-hidden="true"
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          {/* The footage is mostly white, so darken it enough for white text to stay readable. */}
+          <div aria-hidden="true" className="absolute inset-0 bg-ink/75" />
+        </div>
+        <div className="hero-text relative flex min-h-104 flex-col justify-end px-6 pt-16 pb-6 text-white sm:min-h-120 sm:p-12 sm:pt-24">
+          <h1 id="hero-title" className="hero-enter max-w-3xl text-display">
             Find, sniff and share in GenSan
           </h1>
-          <p className="mt-5 max-w-xl text-lg sm:text-xl">{site.description}</p>
-          <div className="mt-8 flex flex-col gap-2 sm:flex-row sm:gap-3">
+          <p className="hero-enter-fade mt-5 max-w-xl text-lg [--enter-step:1] sm:text-xl">
+            {site.description}
+          </p>
+          <div className="hero-enter-fade mt-8 flex flex-col gap-2 [--enter-step:2] sm:flex-row sm:gap-3">
             <Button href={sectionHref(sections.scentMap.id)}>Explore the Scent Map</Button>
             <Button href={site.subredditUrl} variant="outlineOnDark">
               Join the subreddit

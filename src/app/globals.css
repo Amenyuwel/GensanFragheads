@@ -54,6 +54,243 @@
   }
 }
 
+/*
+ * Parallax and entrance motion. Shared values: --motion-travel is how far a layer drifts over its
+ * scroll range (smaller on phones), --motion-enter-* shape load-in animations. Only transform and
+ * opacity move. Browsers without animation-timeline, or with reduced motion, keep the static layout.
+ */
+:root {
+  --motion-travel: 4rem;
+  --motion-enter-distance: 1rem;
+  --motion-enter-duration: 400ms;
+  --motion-enter-stagger: 100ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (width < 40rem) {
+  :root {
+    --motion-travel: 2rem;
+  }
+}
+
+@keyframes enter-up {
+  from {
+    transform: translateY(var(--motion-enter-distance));
+  }
+}
+
+@keyframes enter-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-enter-distance));
+  }
+}
+
+@keyframes drift-down {
+  to {
+    transform: translateY(var(--motion-travel));
+  }
+}
+
+@keyframes drift-up {
+  to {
+    transform: translateY(calc(var(--motion-travel) * -0.4));
+  }
+}
+
+@keyframes drift-across {
+  from {
+    transform: translateY(calc(var(--motion-travel) * -1));
+  }
+  to {
+    transform: translateY(var(--motion-travel));
+  }
+}
+
+@keyframes drift-across-reverse {
+  from {
+    transform: translateY(calc(var(--motion-travel) * 0.6));
+  }
+  to {
+    transform: translateY(calc(var(--motion-travel) * -0.6));
+  }
+}
+
+/* Hero media sits taller than its panel by one travel distance so the drift never exposes an edge. */
+.hero-media {
+  position: absolute;
+  inset: calc(var(--motion-travel) * -1) 0 0;
+}
+
+/* Soft saffron glows behind the Join panel text. Faint enough to keep white text above 4.5:1. */
+.join-shape {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0.2;
+  background: radial-gradient(closest-side, var(--accent-bright), transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Load-in for the hero heading, text and buttons. The heading keeps full opacity for LCP. */
+  .hero-enter,
+  .hero-enter-fade {
+    animation: var(--motion-enter-duration) var(--motion-ease) backwards;
+    animation-delay: calc(var(--enter-step, 0) * var(--motion-enter-stagger));
+  }
+  .hero-enter {
+    animation-name: enter-up;
+  }
+  .hero-enter-fade {
+    animation-name: enter-up-fade;
+  }
+
+  @supports (animation-timeline: view()) {
+    .hero-media,
+    .hero-text,
+    .join-shape {
+      animation-timing-function: linear;
+    }
+    /* Separate rule on purpose: the build minifier merges these longhands into a shorthand and emits `animation: none`. */
+    .hero-media,
+    .hero-text,
+    .join-shape {
+      animation-fill-mode: both;
+    }
+    /* The hero starts at the top of the page, so its range is the first stretch of scrolling. */
+    .hero-media,
+    .hero-text {
+      animation-timeline: scroll(root);
+      animation-range: 0 40rem;
+    }
+    .hero-media {
+      animation-name: drift-down;
+    }
+    .hero-text {
+      animation-name: drift-up;
+    }
+    .join-shape {
+      animation-timeline: view();
+      animation-range: cover;
+      animation-name: drift-across;
+    }
+    .join-shape-reverse {
+      animation-name: drift-across-reverse;
+    }
+  }
+}
+
+/*
+ * Scroll reveals and hover lifts. Everything is plain by default; the motion below only exists with
+ * motion allowed. Reveals use fill-mode backwards, so once the range ends nothing is held and hover
+ * transforms work. Only transform and opacity move (hover shadows aside). Never put these on the map or the embed.
+ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--motion-enter-distance) * 1.5));
+  }
+}
+
+@keyframes grow-across {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.scroll-progress {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion-lift {
+    transition-property: color, background-color, border-color, transform;
+  }
+  .arrow-nudge {
+    transition: transform 150ms ease-out;
+  }
+  a:hover > .arrow-nudge,
+  a:focus-visible > .arrow-nudge {
+    transform: translate(2px, -2px);
+  }
+
+  @media (hover: hover) {
+    .motion-lift:hover {
+      transform: translateY(-2px);
+    }
+    .spot-card {
+      transition:
+        transform 200ms var(--motion-ease),
+        box-shadow 200ms var(--motion-ease);
+    }
+    .spot-card:hover,
+    .spot-card:focus-within {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgb(35 26 46 / 0.15);
+    }
+  }
+
+  /* After the hover rule (same specificity) so a pressed button shows the press, not the lift. */
+  .motion-lift:active {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  @supports (animation-timeline: view()) {
+    .page-section > h2,
+    .page-section > p,
+    .spot-card,
+    .info-card {
+      animation-timing-function: linear;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    /* Separate rule on purpose, see the hero fill-mode note above. */
+    .page-section > h2,
+    .page-section > p,
+    .spot-card,
+    .info-card {
+      animation-fill-mode: backwards;
+    }
+    .page-section > h2,
+    .page-section > p,
+    .spot-card,
+    .info-card {
+      animation-name: reveal-up;
+      animation-timing-function: var(--motion-ease);
+    }
+    /* Light stagger: later cards in a row start a little further into the scroll. */
+    .spot-card,
+    .info-card {
+      animation-range: entry calc(var(--reveal-step, 0) * 10%) entry calc(60% + var(--reveal-step, 0) * 10%);
+    }
+    .spot-card:nth-child(3n + 2),
+    .info-card:nth-child(3n + 2) {
+      --reveal-step: 1;
+    }
+    .spot-card:nth-child(3n),
+    .info-card:nth-child(3n) {
+      --reveal-step: 2;
+    }
+
+    @media (width >= 48rem) {
+      .scroll-progress {
+        display: block;
+        position: absolute;
+        inset: auto 0 -1px;
+        height: calc(var(--spacing) * 0.75);
+        background: var(--accent);
+        transform-origin: left;
+        pointer-events: none;
+        animation: grow-across linear both;
+        animation-timeline: scroll(root);
+      }
+    }
+  }
+}
+
 /* The one content width used across the site. */
 @utility page-width {
   margin-inline: auto;
@@ -247,4 +484,33 @@ a {
 .scent-pin:hover svg,
 .scent-pin:focus-visible svg {
   transform: scale(1.15);
+}
+
+/* Saffron band with a broad wave edge above and below it, drawn as masked ::before/::after strips. Decorative, so pure CSS. */
+.wave-band {
+  position: relative;
+}
+
+.wave-band::before,
+.wave-band::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3rem;
+  pointer-events: none;
+  background-color: var(--accent);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+/* The 1px overlap with the band hides any seam from sub-pixel rounding. */
+.wave-band::before {
+  bottom: calc(100% - 1px);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'%3E%3Cpath d='M0 30C200 -6 360 8 560 28S900 52 1100 24S1340 6 1440 22V48H0Z'/%3E%3C/svg%3E");
+}
+
+.wave-band::after {
+  top: calc(100% - 1px);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1440V24C1260 54 1080 40 880 20S520 -4 340 22S100 44 0 26Z'/%3E%3C/svg%3E");
 }

@@ -30,7 +30,7 @@ function PinIcon() {
 
 function ArrowIcon() {
   return (
-    <svg {...iconProps}>
+    <svg {...iconProps} className="arrow-nudge size-4 shrink-0">
       <path d="M7 17 17 7M8 7h9v9" />
     </svg>
   );
@@ -54,7 +54,7 @@ export function SpotList({ selectedName, onShowOnMap }: Props) {
     <div className="space-y-12">
       {filled.map(({ kind, label, blurb, spots }) => (
         <div key={kind}>
-          <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-foreground pb-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2 pb-3">
             <h3 className="text-2xl">{label}</h3>
             <p className="text-lg text-muted">{blurb}</p>
           </div>
@@ -64,12 +64,12 @@ export function SpotList({ selectedName, onShowOnMap }: Props) {
               return (
                 <li
                   key={spot.name}
-                  className={`relative flex min-w-0 flex-col rounded-panel border-2 bg-subtle p-6 ${
+                  className={`spot-card relative flex min-w-0 flex-col rounded-panel border-2 bg-subtle p-6 ${
                     isSelected ? "border-foreground" : "border-transparent"
                   }`}
                 >
                   {isSelected && (
-                    <span className="mb-2 self-start rounded-control bg-accent px-3 text-sm tracking-label text-ink uppercase">
+                    <span className="pointer-events-none absolute top-0 left-6 -translate-y-1/2 rounded-control bg-accent px-3 text-sm tracking-label text-ink uppercase">
                       On the map
                     </span>
                   )}

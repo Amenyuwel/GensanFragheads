@@ -12,6 +12,8 @@ function siteUrl() {
 
 export const site = {
   name: "GenSanFragheads",
+  /** Home page title; other pages are suffixed with the name. */
+  homeTitle: "GenSanFragheads: Fragrance Shops and Decants in General Santos City",
   description:
     "Where to buy, test and decant fragrance in General Santos City.",
   subreddit: "r/GenSanFragheads",

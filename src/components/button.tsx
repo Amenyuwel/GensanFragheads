@@ -11,7 +11,7 @@ type Props = { href: string; children: ReactNode; variant?: keyof typeof variant
 
 /** Pill-shaped link styled as a button. Internal paths use next/link. */
 export function Button({ href, children, variant = "solid" }: Props) {
-  const className = `inline-flex min-h-12 items-center justify-center rounded-control px-6 py-2 text-center text-base font-medium transition-ui ${variants[variant]}`;
+  const className = `inline-flex min-h-12 items-center justify-center rounded-control px-6 py-2 text-center text-base font-medium transition-ui motion-lift ${variants[variant]}`;
   return href.startsWith("/") ? (
     <Link href={href} className={className}>
       {children}

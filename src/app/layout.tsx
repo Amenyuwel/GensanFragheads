@@ -21,20 +21,14 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: site.name,
+  title: { default: site.homeTitle, template: `%s | ${site.name}` },
   description: site.description,
-  alternates: { canonical: "/" },
   openGraph: {
-    title: site.name,
-    description: site.description,
-    url: "/",
     siteName: site.name,
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: site.name,
-    description: site.description,
   },
 };
 

@@ -32,21 +32,16 @@ export function CommunityPosts({ posts }: { posts: CommunityPost[] }) {
     };
   }, []);
 
+  // One post: cap at 40rem (640px), the fixed width Reddit gives its frame and centres, so the card meets the heading edge.
   return (
-    <ul ref={listRef} className={`grid items-start gap-4 ${posts.length > 1 ? "md:grid-cols-2" : "max-w-2xl"}`}>
+    <ul ref={listRef} className={`grid items-start gap-4 ${posts.length > 1 ? "md:grid-cols-2" : "max-w-[40rem]"}`}>
       {posts.map((post) => (
         <li key={post.url} className="min-w-0">
-          <blockquote className="reddit-embed-bq rounded-panel bg-subtle p-6" data-embed-theme="light">
+          <blockquote className="reddit-embed-bq rounded-panel bg-background p-6" data-embed-theme="light">
             <a href={post.url} className="break-words underline">
               {post.title}
             </a>
           </blockquote>
-          {/* Outside the embed, so it stays when Reddit shows an error inside its frame. */}
-          <p className="mt-3">
-            <a href={post.url} className="underline">
-              View on Reddit<span className="sr-only">: {post.title}</span>
-            </a>
-          </p>
         </li>
       ))}
     </ul>
