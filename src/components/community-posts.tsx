@@ -42,6 +42,10 @@ export function CommunityPosts({ posts }: { posts: CommunityPost[] }) {
               {post.title}
             </a>
           </blockquote>
+          {/* Outside the embed, so it stays when Reddit shows an error inside its frame. */}
+          <a href={post.url} className="mt-1 inline-flex min-h-11 items-center text-ink underline">
+            View on Reddit<span className="sr-only">: {post.title}</span>
+          </a>
         </li>
       ))}
     </ul>
