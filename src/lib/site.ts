@@ -35,14 +35,6 @@ export function sectionHref(id: string) {
   return `/#${id}`;
 }
 
-/** Ids of the sections on the home page, in scroll order. */
-export const homeSectionIds = [sections.scentMap.id];
-
-/** Nav order: home sections in scroll order. Each item scroll-spies on the home page via its `sectionId`. */
-export const nav = [
-  { label: sections.scentMap.label, href: sectionHref(sections.scentMap.id), sectionId: sections.scentMap.id },
-];
-
 /** Body text pre-filled into new subreddit posts, so submissions arrive in a consistent shape. */
 export const postTemplates = {
   spot: "Name:\nLocation or where to order:\nBrands carried:\nTesters available?\nPrice range:",

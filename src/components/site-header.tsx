@@ -4,7 +4,8 @@ import Link from "next/link";
 import type { MouseEvent } from "react";
 import { usePathname } from "next/navigation";
 import { useActiveSection } from "@/hooks/use-active-section";
-import { homeSectionIds, nav, site } from "@/lib/site";
+import { homeSectionIds, nav } from "@/lib/nav";
+import { site } from "@/lib/site";
 
 // Module-level so the hook gets the same array on every render.
 const noSectionIds: string[] = [];
@@ -43,7 +44,7 @@ export function SiteHeader() {
           {site.name}
         </Link>
         <nav aria-label="Main">
-          <ul className="flex items-center gap-x-2 text-base font-medium">
+          <ul className="flex flex-wrap items-center gap-x-2 text-base font-medium">
             {nav.map((item) => {
               const current = active === item.sectionId;
               return (
@@ -51,7 +52,7 @@ export function SiteHeader() {
                   <a
                     href={item.href}
                     aria-current={current ? "location" : undefined}
-                    className={`inline-flex min-h-11 items-center rounded-control px-4 transition-ui ${
+                    className={`inline-flex min-h-11 items-center rounded-control px-3 whitespace-nowrap transition-ui sm:px-4 ${
                       current ? "bg-foreground text-background" : "text-muted hover:bg-subtle hover:text-foreground"
                     }`}
                   >
@@ -61,7 +62,7 @@ export function SiteHeader() {
               );
             })}
             <li>
-              <a href={site.subredditUrl} className="inline-flex min-h-11 items-center rounded-control bg-accent px-4 text-ink transition-ui motion-lift hover:bg-accent-bright">
+              <a href={site.subredditUrl} className="inline-flex min-h-11 items-center rounded-control bg-accent px-3 whitespace-nowrap text-ink transition-ui motion-lift hover:bg-accent-bright sm:px-4">
                 Join
               </a>
             </li>

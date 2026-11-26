@@ -1,4 +1,5 @@
-import { nav, site } from "@/lib/site";
+import { nav } from "@/lib/nav";
+import { site } from "@/lib/site";
 
 export function SiteFooter() {
   return (
